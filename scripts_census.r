@@ -115,3 +115,6 @@ bus_phila<-bus_phila %>%
 
 metro<-st_read("data/metro.geojson")
 metro_phila<-st_intersection(metro, phila_boundary)
+
+
+complete<- "https://hub.arcgis.com/api/v3/datasets/b227f3ddbe3e47b4bcc7b7c65ef2cef6_0/downloads/data?format=csv&spatialRefId=3857&where=1%3D1"
