@@ -102,3 +102,16 @@ phila_transit<-phila_transit %>%
     WFH = WFHE
   )  
 
+bus<-st_read("data/bus.geojson")
+
+boundary<-"https://opendata.arcgis.com/datasets/405ec3da942d4e20869d4e1449a2be48_0.geojson"
+phila_boundary<-st_read(boundary)
+
+bus_phila<-st_intersection(bus, phila_boundary)
+
+#filter out OWL routes
+bus_phila<-bus_phila %>%
+  filter(!str_detect(Route, "OWL"))
+
+metro<-st_read("data/metro.geojson")
+metro_phila<-st_intersection(metro, phila_boundary)
