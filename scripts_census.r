@@ -149,7 +149,7 @@ phila_transit$trolley_station <- lengths(idx2)
 #weighted matrix: bus*1/10 + metro*1/3 + trolley*1/5
 # assigned index based on quantiles from 100 to 0
 phila_transit<-phila_transit %>%
-  mutate(transit_index = bus_station*3 + metro_station*10 + trolley_station*15,
+  mutate(transit_index = bus_station*3 + metro_station*15 + trolley_station*10,
          tiles=ntile(transit_index, n = 10),
          index=ntile(transit_index, n = 100)) 
 
