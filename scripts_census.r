@@ -74,8 +74,7 @@ phila_transit<-phila_transit %>%
                   less_than_15_minutes, between_15_and_30_minutes,
                   between_30_and_45_minutes, between_45_and_60_minutes,
                   more_than_90_minutes, active_transport),
-                ~ .x/totalE)) %>%
-  select(-totalE)
+                ~ .x/totalE)) 
 
 # round all two 2 decimal point
 phila_transit<-phila_transit %>%
@@ -96,6 +95,7 @@ phila_transit<-phila_transit %>%
 
 phila_transit<-phila_transit %>%
   rename(
+    Total = totalE,
     drive = driveE,
     carpool = carpoolE,
     public_transit = public_transitE,
@@ -168,7 +168,7 @@ phila_transit<-phila_transit%>%
   ))
 
 phila_transit<-phila_transit %>%
-  select(NAME, drive, carpool, public_transit, WFH,
+  select(Total,NAME, drive, carpool, public_transit, WFH,
          less_than_15_minutes, between_15_and_30_minutes,
          between_30_and_45_minutes, between_45_and_60_minutes,
          more_than_90_minutes, active_transport,

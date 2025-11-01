@@ -98,8 +98,8 @@ transit_index = (bus_station × 3) + (metro_station × 15) + (trolley_station ×
 ```
 
 **Rationale for Weights:**
-- **Trolley stops (10 points):** Highest weight due to fixed infrastructure, frequent service, and neighborhood-level accessibility
-- **Metro stations (15 points):** High weight due to high capacity and reliability, but fewer stops mean less granular access
+- **Trolley stops (10 points):** High weight due to fixed infrastructure, frequent service, and neighborhood-level accessibility
+- **Metro stations (15 points):** Highest weight due to high capacity and reliability
 - **Bus routes (3 points):** Lower weight as routes are more numerous but may have less frequent service
 
 ### Step 4: Index Normalization
