@@ -15,8 +15,8 @@ The output is a GeoJSON file containing transit accessibility scores and commute
 
 ### Census Data (American Community Survey 2023)
 - **Variables Used:**
-  - B08303: Travel time to work (in various time brackets)
-  - B08301: Means of transportation to work (drive, carpool, public transit, walk, bike, motorcycle, work from home)
+  - `B08303`: Travel time to work (in various time brackets)
+  - `B08301`: Means of transportation to work (drive, carpool, public transit, walk, bike, motorcycle, work from home)
 - **Geography:** Census tracts in Philadelphia County, PA
 - **Year:** 2023 5-year estimates
 
@@ -80,26 +80,26 @@ For each census tract, count the number of transit facilities that intersect wit
 1. **Bus Route Count** (`bus_station`)
    - Count unique bus routes that pass through the tract
    - Weight: 3 points per route
-
+     
 2. **Metro Station Count** (`metro_station`)
    - Count metro/subway stations within the tract
-   - Weight: 10 points per station
+   - Weight: 15 points per station 
 
 3. **Trolley Stop Count** (`trolley_station`)
    - Count trolley and surface rail stops within the tract
-   - Weight: 15 points per stop
-
+   - Weight: 10 points per stop
+     
 ### Step 3: Calculate Transit Index
 
 The raw transit index is calculated using a weighted sum:
 
 ```
-transit_index = (bus_station × 3) + (metro_station × 10) + (trolley_station × 15)
+transit_index = (bus_station × 3) + (metro_station × 15) + (trolley_station × 10)
 ```
 
 **Rationale for Weights:**
-- **Trolley stops (15 points):** Highest weight due to fixed infrastructure, frequent service, and neighborhood-level accessibility
-- **Metro stations (10 points):** High weight due to high capacity and reliability, but fewer stops mean less granular access
+- **Trolley stops (10 points):** Highest weight due to fixed infrastructure, frequent service, and neighborhood-level accessibility
+- **Metro stations (15 points):** High weight due to high capacity and reliability, but fewer stops mean less granular access
 - **Bus routes (3 points):** Lower weight as routes are more numerous but may have less frequent service
 
 ### Step 4: Index Normalization
@@ -114,7 +114,7 @@ transit_index = (bus_station × 3) + (metro_station × 10) + (trolley_station ×
    - Used to assign color codes for mapping
 
 3. **Color Coding**
-   - Each decile assigned a color from light teal (#80ffdb) to dark purple (#7400b8)
+   - Each decile is assigned a color from light teal (#80ffdb) to dark purple (#7400b8)
    - Creates a visual gradient from low to high accessibility
 
 ## Output Fields
@@ -164,4 +164,4 @@ This is a data processing pipeline. To contribute:
 - The index is relative to Philadelphia only and should not be compared to other cities
 - Census tract boundaries and populations change over time
 - Transit infrastructure data should be updated periodically for accuracy
-- The weighting scheme (3-10-15) is configurable but should be justified if changed
+- The weighting scheme (3-10-15) is configurable, but should be justified if changed
