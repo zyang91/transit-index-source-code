@@ -112,9 +112,72 @@ bus_phila<-st_intersection(bus, phila_boundary)
 #filter out OWL routes
 bus_phila<-bus_phila %>%
   filter(!str_detect(Route, "OWL"))
+bus_phila<-bus_phila %>%
+  st_transform(st_crs(phila_transit))
 
-metro<-st_read("data/metro.geojson")
-metro_phila<-st_intersection(metro, phila_boundary)
+idx1 <- st_intersects(phila_transit, bus_phila) 
+phila_transit$bus_station <- lengths(idx1)
 
+# bus<-st_join(phila_transit, bus_phila, join = st_intersects)%>%
+#   group_by(NAME)%>%
+#   summarise(station=n())
+# 
+# bus<-bus%>%
+#   st_drop_geometry()
+
+
+metro <- st_read("data/metro.geojson", quiet = TRUE)
+metro_phila <- st_filter(metro, phila_boundary)%>%
+  st_transform(st_crs(phila_transit))
+
+idx <- st_intersects(phila_transit, metro_phila) 
+phila_transit$metro_station <- lengths(idx)
 
 complete<- "https://hub.arcgis.com/api/v3/datasets/b227f3ddbe3e47b4bcc7b7c65ef2cef6_0/downloads/data?format=csv&spatialRefId=3857&where=1%3D1"
+
+phila_complete<-read_csv(complete)
+trolley_phila<-phila_complete %>%
+  filter(LineAbbr %in% c("T1", "T2", "T3", "T4", "T5","G1","D1","D2")) %>%
+  st_as_sf(coords = c("Lon", "Lat"), crs = 4326)%>%
+  st_transform(st_crs(phila_boundary))%>%
+  st_filter(phila_boundary)
+trolley_phila<-st_transform(trolley_phila, st_crs(phila_transit))
+idx2 <- st_intersects(phila_transit, trolley_phila)
+phila_transit$trolley_station <- lengths(idx2)
+
+# index processing
+#weighted matrix: bus*1/10 + metro*1/3 + trolley*1/5
+# assigned index based on quantiles from 100 to 0
+phila_transit<-phila_transit %>%
+  mutate(transit_index = bus_station*3 + metro_station*10 + trolley_station*15,
+         tiles=ntile(transit_index, n = 10),
+         index=ntile(transit_index, n = 100)) 
+
+phila_transit<-phila_transit%>%
+  mutate(color=case_when(
+    tiles==1 ~ "#80ffdb",
+    tiles==2 ~ "#72efdd",
+    tiles==3 ~ "#64dfdf",
+    tiles==4 ~ "#56cfe1",
+    tiles==5 ~ "#48bfe3",
+    tiles==6 ~ "#4ea8de",
+    tiles==7 ~ "#5390d9",
+    tiles==8 ~ "#5e60ce",
+    tiles==9 ~ "#6930c3",
+    tiles==10 ~ "#7400b8"
+  ))
+
+phila_transit<-phila_transit %>%
+  select(NAME, drive, carpool, public_transit, WFH,
+         less_than_15_minutes, between_15_and_30_minutes,
+         between_30_and_45_minutes, between_45_and_60_minutes,
+         more_than_90_minutes, active_transport,
+         bus_station, metro_station, trolley_station,index, color)
+
+st_write(phila_transit, "data/phila_transit_index.geojson", delete_dsn = TRUE)
+# ggplot(data = phila_transit) +
+#   geom_sf(aes(fill = color), color = NA) +
+#   scale_fill_identity() +
+#   labs(title = "Transit Accessibility Index in Philadelphia",
+#        fill = "Transit Accessibility Index") +
+#   theme_void()
