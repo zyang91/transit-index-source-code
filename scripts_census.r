@@ -166,6 +166,11 @@ phila_transit<-phila_transit%>%
     tiles==9 ~ "#6930c3",
     tiles==10 ~ "#7400b8"
   ))
+# calculate a legend column ~ color for each index
+public_transit_index<-phila_transit %>%
+  select(index, color) %>%
+  distinct()
+
 
 phila_transit<-phila_transit %>%
   select(Total,NAME, drive, carpool, public_transit, WFH,
